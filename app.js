@@ -1,5 +1,6 @@
 const fetch = require('node-fetch')
 const crypto = require('crypto')
+const exec = require('child_process').exec
 
 const ip = process.env.IP
 const password = process.env.PASSWORD
@@ -88,6 +89,7 @@ async function mainLoop() {
     let fixed = await checkMessages()
     if (fixed) {
         setTimeout(mainLoop, interval * 2)
+        return
     }
 
     //Checking connection
@@ -203,23 +205,16 @@ async function getUsage() {
 }
 
 async function checkConnection() {
-    try {
-        result = await fetch("https://nickremijn.nl/",
-            {
-                redirect: "manual",
-                follow: 0,
-                timeout: 2000 //Max 2S timeout to keep script running if internet is fubar
-            })
-    } catch (e) {
-        return false
-    }
-
-    if (result.headers.get('location') === "http://remijn.io/") {
-        //Connection is fine!
-        return true
-    } else {
-        return false
-    }
+    let promise = new Promise((res, err)=>{
+        exec('ping -c 1 8.8.8.8', function(error, stdout, stderr){
+            if(error !== null)
+                res(false)
+             else
+                res(true)
+       });
+    });
+    
+    return await promise
 }
 
 async function webCGI(data) {
