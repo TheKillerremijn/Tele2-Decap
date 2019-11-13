@@ -30,7 +30,7 @@ async function main() {
 
     console.log = function (obj, ...placeholders) {
         if (typeof obj === 'string')
-            placeholders.unshift("[" + new Date().toUTCString() + "] " + obj)
+            placeholders.unshift("[" + new Date().toString() + "] " + obj)
         else {
             // This handles console.log( object )
             placeholders.unshift(obj)
@@ -49,7 +49,7 @@ async function main() {
     console.log("Starting with unknown limit, setting to current usage +5GB")
     usageAt = await getUsage() + 5
 
-    mainLoop()
+    setInterval(mainLoop, interval)
 
     // setInterval(async ()=>{
     //     let date = new Date()
@@ -88,7 +88,7 @@ async function mainLoop() {
     //Check Messages
     let fixed = await checkMessages()
     if (fixed) {
-        setTimeout(mainLoop, interval * 2)
+        // setTimeout(mainLoop, interval * 2)
         return
     }
 
@@ -123,7 +123,7 @@ async function mainLoop() {
         //Connection is working perfectly
     }
 
-    setTimeout(mainLoop, interval)
+    // setTimeout(mainLoop, interval)
 }
 
 async function checkMessages() {
